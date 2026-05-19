@@ -1,34 +1,37 @@
 # Enter your code here. Read input from STDIN. Print output to STDOUT
-import numpy as np 
-from sklearn.preprocessing import PolynomialFeatures
+import math
+import os
+import random
+import re
+import sys
+import numpy as np
+#import matplotlib.pyplot as plt
+#import pandas as pd
 from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import PolynomialFeatures
 
+if __name__ == '__main__':
+    fptr = open(os.environ['OUTPUT_PATH'], 'w')
+    
+    F, N = map(int, input().rstrip().split())
+    
+    data = np.array([list(map(float, input().rstrip().split())) for _ in range(N)])
+    
+    T = int(input())
+    
+    test = np.array([list(map(float, input().rstrip().split())) for _ in range(T)])
+    
+    
+    lr = LinearRegression()
+    x = data[:,0:F]
+    y = data[:,F]
+    poly = PolynomialFeatures(degree=3)
+    x_poly = poly.fit_transform(x)
+    lr.fit(x_poly, y)
+    
+    price = lr.predict(poly.fit_transform(test))
+    
+    for row in price:
+        fptr.write(f'{row:.2f}\n')
 
-F, N = map(int, input().split())
-
-data = [list(map(float, input().split())) for i in range(N)]
-
-data = np.array(data)
-
-X_train, y_train = data[:, :-1], data[:, -1]
-
-T = int(input())
-
-X_test = [list(map(float, input().split())) for i in range(T)]
-
-X_test = np.array(X_test)
-
-degree = 3
-
-poly = PolynomialFeatures(degree)
-
-X_train_poly = poly.fit_transform(X_train)
-X_test_poly = poly.transform(X_test)
-
-model = LinearRegression()
-model.fit(X_train_poly, y_train)
-
-predictions = model.predict(X_test_poly)
-
-for p in predictions:
-    print(round(p, 2))
+    fptr.close()
